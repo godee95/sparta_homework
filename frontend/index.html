@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Stylish&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+            font-family: 'Stylish', sans-serif;
+        }
+
+        .wrap {
+            width: 900px;
+            margin: auto;
+        }
+
+        .comment {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .posting-box {
+            border: 3px solid black;
+            border-radius: 5px;
+            width: 500px;
+            /*시계방향 위 오른쪽 아래 왼쪽*/
+            margin: 10px auto 30px auto;
+            padding: 25px;
+
+            display: none;
+        }
+
+        .shift {
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('#cards-box').empty();
+            listing();
+        });
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/post",
+                data: {},
+                success: function (response) {
+                    // console.log(response)
+                    let rows = response['articles']
+                    for (let i = 0; i < rows.length; i++) {
+                        let comment = rows[i]['comment']
+                        let desc = rows[i]['desc']
+                        let image = rows[i]['image']
+                        let title = rows[i]['title']
+                        let url = rows[i]['url']
+                        // console.log(comment, desc, image, title, url)
+
+                        let temp_html = `<div class="card">
+                                                <img class="card-img-top"
+                                                     src="${image}"
+                                                     alt="Card image cap">
+                                                <div class="card-body">
+                                                    <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                                                    <a href="${url}" class="card-title">${title}</a>
+                                                    <p class="card-text">${desc}</p>
+                                                    <p class="card-text comment">${comment}</p>
+                                                    <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+                                                </div>
+                                            </div>`
+                        $('#cards-box').append(temp_html);
+                    }
+                }
+            })
+            console.log('화면 로딩 후 잘 실행되었습니다');
+        }
+
+        function openclose() {
+            let status = $('#post-box').css('display');
+            // console.log(status)
+            if (status == 'block') {
+                $('#post-box').hide();
+                $('#btn-posting-box').text('포스팅박스 열기');
+            } else {
+                $('#post-box').show();
+                $('#btn-posting-box').text('포스팅박스 닫기');
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+<div class="wrap">
+    <div class="jumbotron">
+        <h1 class="display-4">나홀로 링크 메모장!</h1>
+        <p class="lead">중요한 링크를 저장해두고, 나중에 볼 수 있는 공간입니다</p>
+        <hr class="my-4">
+        <!--      <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>-->
+        <p class="lead">
+            <a onclick="openclose()" id="btn-posting-box" class="btn btn-primary btn-lg" href="#" role="button">포스팅박스
+                열기</a>
+        </p>
+    </div>
+    <div class="posting-box" id="post-box">
+        <div class="form-group shift">
+            <label>아티클 URL</label>
+            <input type="email" class="form-control" id="article-url" aria-describedby="emailHelp">
+            <!--                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone-->
+            <!--                    else.</small>-->
+        </div>
+        <div class="form-group shift">
+            <label for="exampleFormControlTextarea1">간단 코멘트</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <!--            <div class="form-check">-->
+        <!--                <input type="checkbox" class="form-check-input" id="exampleCheck1">-->
+        <!--                <label class="form-check-label" for="exampleCheck1">Check me out</label>-->
+        <!--            </div>-->
+        <button type="submit" class="btn btn-primary shift">기사 저장</button>
+    </div>
+    <div class="card-columns" id="cards-box">
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="https://media.baamboozle.com/uploads/images/176621/1612132140_257264"
+                 alt="Card image cap">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Card title that wraps to a new line</h5>-->
+                <a href="http://naver.com/"> 여기 기사 제목이 들어가죠 </a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
+                <!--                    <span style="color:blue">여기에 코멘트가 들어갑니다.</span>-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
